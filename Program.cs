@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 class Program
 {
     static void Main(string[] args)
     {
-        if (args.Length == 0)
+        // Demander à l'utilisateur de saisir le nom du projet
+        Console.WriteLine("Veuillez entrer le nom de votre projet :");
+        string projectName = Console.ReadLine();
+
+        // Vérifier si le nom du projet est vide
+        if (string.IsNullOrEmpty(projectName))
         {
-            Console.WriteLine("Erreur : Veuillez spécifier un nom de projet.");
+            Console.WriteLine("Erreur : Le nom du projet ne peut pas être vide.");
             return;
         }
-
-        string projectName = args[0];
 
         // Étape 1: Créer un nouveau projet avec Vite
         RunCommand($"npm create vite@latest {projectName} -- --template vanilla");
 
         // Déplacer dans le dossier du projet
-        string projectPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), projectName);
+        string projectPath = Path.Combine(Directory.GetCurrentDirectory(), projectName);
         Directory.SetCurrentDirectory(projectPath);
 
         // Étape 2: Installer Tailwind CSS, PostCSS, et Autoprefixer
@@ -27,32 +31,33 @@ class Program
         RunCommand("npx tailwindcss init -p");
 
         // Étape 4: Configurer tailwind.config.js
-        string tailwindConfigPath = System.IO.Path.Combine(projectPath, "tailwind.config.js");
+        string tailwindConfigPath = Path.Combine(projectPath, "tailwind.config.js");
         string tailwindConfigContent = @"
-            module.exports = {
-              content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-              theme: {
-                extend: {},
-              },
-              plugins: [],
-            };
-            ";
+module.exports = {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+";
         File.WriteAllText(tailwindConfigPath, tailwindConfigContent);
         Console.WriteLine("Fichier tailwind.config.js mis à jour.");
 
         // Étape 5: Ajouter les directives Tailwind dans le fichier CSS principal
-        string cssPath = System.IO.Path.Combine(projectPath, "src", "style.css");
+        string cssPath = Path.Combine(projectPath, "src", "style.css");
         string tailwindDirectives = @"
-                @tailwind base;
-                @tailwind components;
-                @tailwind utilities;
-            ";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+";
         File.WriteAllText(cssPath, tailwindDirectives);
         Console.WriteLine("Directives Tailwind ajoutées au fichier CSS.");
 
         Console.WriteLine("Projet initialisé avec succès !");
     }
 
+    // Méthode pour exécuter une commande shell
     static void RunCommand(string command)
     {
         ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe", "/c " + command);
