@@ -29,14 +29,14 @@ class Program
         // Étape 4: Configurer tailwind.config.js
         string tailwindConfigPath = System.IO.Path.Combine(projectPath, "tailwind.config.js");
         string tailwindConfigContent = @"
-module.exports = {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
-";
+            module.exports = {
+              content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+              theme: {
+                extend: {},
+              },
+              plugins: [],
+            };
+            ";
         File.WriteAllText(tailwindConfigPath, tailwindConfigContent);
         Console.WriteLine("Fichier tailwind.config.js mis à jour.");
 
